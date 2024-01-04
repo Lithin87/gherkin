@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(features = "src/test/resources/features", glue = "com.example.stepdefinitions")
+@CucumberOptions(features = "src/test/resources/features", glue = "com.example.demo.stepdefinitions")
 @SpringBootTest
 public class RunCucumberTest {
 }

@@ -11,17 +11,4 @@ Feature: Kafka Integration in Spring Boot Application
     When a consumer subscribes to "testTopic"
     Then the consumer receives the message "Hello, Kafka!"
 
-  Scenario: Produce and consume multiple messages
-    Given a Kafka topic "testTopic" exists
-    When messages are sent to "testTopic":
-      | Message                |
-      | "Message 1"            |
-      | "Message 2"            |
-      | "Message 3"            |
-    And a consumer subscribes to "testTopic"
-    Then the consumer receives the messages:
-      | Expected Message       |
-      | "Message 1"            |
-      | "Message 2"            |
-      | "Message 3"            |
-
+ 

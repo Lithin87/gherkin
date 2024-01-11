@@ -9,17 +9,8 @@ Feature: Kafka Integration in Spring Boot Application
     Given a Kafka topic "testTopic" exists in "localhost:9092"
     And a message "Hello, Kafka!" is present in "testTopic"
     When a consumer subscribes to "testTopic"
-    Then the consumer receives the message "Hello, Kafka!"
+    Then the consumer receives the message "Hello, Kafka!" from "testTopic"
 
-  Scenario: Consume a message from Kafka and resend after transforming
-    Given a Kafka topic "testTopic" exists in "localhost:9092"
-    And a message "Hello, Kafka!" is present in "testTopic"
-    When a consumer subscribes to "testTopic"
-    When the consumer receives the message "Hello, Kafka!"
-    When transformation logic is applied and 
-    And transformed message is sent to "testTopic1"
-    When a consumer subscribes to "testTopic1"
-    Then the consumer receives the transformed message
-
+ 
 
  

@@ -84,16 +84,15 @@ public class KafkaStepDefinitions {
         kafkaMessageConsumer.subscribeConsumerToTopic(topic);
     }
 
-    @Then("the consumer receives the message {string}")
-    public void verifyConsumerReceivesMessage(String expectedMessage) {
-        boolean messageReceived = kafkaMessageConsumer.isMessageReceived(expectedMessage);
-        if (messageReceived) {
-            System.out.println("Consumer received the expected message: " + expectedMessage);
+    @Then("the consumer receives the message {string} from {string}")
+    public void verifyConsumerReceivesMessage(String expectedMessage , String topic) {
+        kafkaMessageVerifier.verifyMessage(topic, expectedMessage);
+        boolean messageProduced =kafkaMessageVerifier.isF();
+        if (messageProduced) {
+            System.out.println("The Message is present in Kafka topic");          
         } else {
-            System.out.println("Consumer did not receive the expected message: " + expectedMessage);
-            // You can throw an exception or handle the failure in some other way
+            System.out.println("The Message is not present in Kafka topic");
         }
     }
-
     }
 

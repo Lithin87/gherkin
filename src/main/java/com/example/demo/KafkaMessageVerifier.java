@@ -19,6 +19,19 @@ public class KafkaMessageVerifier {
     @Value("${bootstrap-servers}")
     private String bootstrapServers;
 
+    boolean f;
+    
+    public boolean isF() {
+        return this.f;
+    }
+
+
+    public void setF(boolean f) {
+        this.f = f;
+    }
+
+
+
     public boolean verifyMessage(String topic, String expectedMessage) {
         Properties consumerProps = new Properties();
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -31,11 +44,17 @@ public class KafkaMessageVerifier {
 
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(5)); // Adjust timeout as needed
 
-            return StreamSupport.stream(records.spliterator(), false)
-                    .anyMatch(record -> record.value().equals(expectedMessage));
-        } catch (Exception e) {
+            if (records.count() > 0) {
+                if (StreamSupport.stream(records.spliterator(), false)
+                        .anyMatch(record -> record.value().equals(expectedMessage))){
+                   setF(true);
+                };
+            }else setF(false);
+            return f ;
+       } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+       
     }
 }

@@ -18,7 +18,8 @@ public class KafkaStepDefinitions {
 
     @Autowired
     private KafkaSenderService kafkaSenderService;
-     @Autowired
+    
+    @Autowired
     private KafkaMessageVerifier kafkaMessageVerifier;
 
     @Autowired
@@ -39,8 +40,6 @@ public class KafkaStepDefinitions {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     private void createTopic(AdminClient adminClient, String topic) throws ExecutionException, InterruptedException {
@@ -69,7 +68,7 @@ public class KafkaStepDefinitions {
         }
     }
 
-        @And("a message {string} is present in {string}")
+    @And("a message {string} is present in {string}")
     public void messagePresent(String expectedMessage, String topic) {
         boolean messageProduced = kafkaMessageVerifier.verifyMessage(topic, expectedMessage);
         if (messageProduced) {

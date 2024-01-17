@@ -74,7 +74,7 @@ public class KafkaStepDefinitions {
             System.out.println("The Message is not present in Kafka topic");
             scenario.log("The Message is not present in Kafka topic");
             scenario.log("the available messages are " + kafkaConsumerService.getReceivedMessages());
-            scenario.log("the available messages are " + kafkaConsumerService.getReceivedMessages());
+            scenario.log("the last updated time is " + kafkaConsumerService.getRecordTimestamp());
         }
     }
     

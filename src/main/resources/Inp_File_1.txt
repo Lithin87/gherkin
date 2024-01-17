@@ -1,0 +1,9 @@
+{
+"articleNumber": "000000000005765119",
+"salesOrganisation": "9224",
+"validFrom": "20231005",
+"validTo": "99991231",
+"eventType": "INSERT",
+"createdTimestamp": "20231031 17:09:40",
+"updatedTimestamp": ""
+}

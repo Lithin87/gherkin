@@ -1,21 +1,23 @@
 package com.example.demo;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.kafka.support.SendResult;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class KafkaSenderService {
-    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired
-    public KafkaSenderService(KafkaTemplate<String, String> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
+    private final KafkaTemplate<String, String> kafkaTemplate = null;
+
 
     public void sendMessage(String topic, String message) {
-        kafkaTemplate.send(topic, message);
-        System.out.println("Message sent successfully to Kafka topic: " + topic);
+       CompletableFuture<SendResult<String, String>> completableFuture =  kafkaTemplate.send(topic, message);
+       completableFuture.join();
+       System.out.println("Message sent successfully to Kafka topic: " + topic);
     }
 }
  

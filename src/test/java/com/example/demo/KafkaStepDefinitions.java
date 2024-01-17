@@ -3,6 +3,9 @@ package com.example.demo;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,6 +19,18 @@ public class KafkaStepDefinitions {
 
     @Autowired
     private  KafkaConsumerService kafkaConsumerService ;
+
+    private Scenario scenario;
+
+    @Before
+    public void before(Scenario scenario) {
+        this.scenario = scenario;
+        scenario.log("testing started on "+scenario.getName());
+    }
+    @After
+    public void after(Scenario scenario) {
+        scenario.log("completed "+ scenario.getName());
+    }
 
     @Given("a Kafka topic {string} exists in {string}")
     public void createKafkaTopic(String topic,String bootstrapServers) {
@@ -37,8 +52,10 @@ public class KafkaStepDefinitions {
         boolean messageProduced = kafkaConsumerService.checkMessage(expectedMessage);
         if (messageProduced) {
             System.out.println("Message was successfully produced to Kafka topic");
+            scenario.log("Message was successfully produced to Kafka topic");
         } else {
             System.out.println("Message was not produced to Kafka topic");
+            scenario.log("Message was not produced to Kafka topic");
         }
     }
 
@@ -50,8 +67,14 @@ public class KafkaStepDefinitions {
         boolean messageProduced = kafkaConsumerService.checkMessage(expectedMessage);
         if (messageProduced) {
             System.out.println("The Message is present in Kafka topic");
+            scenario.log("The Message is present in Kafka topic");
+            scenario.log("the available messages are " + kafkaConsumerService.getReceivedMessages());
+            scenario.log("the last updated time is " + kafkaConsumerService.getRecordTimestamp());
         } else {
             System.out.println("The Message is not present in Kafka topic");
+            scenario.log("The Message is not present in Kafka topic");
+            scenario.log("the available messages are " + kafkaConsumerService.getReceivedMessages());
+            scenario.log("the available messages are " + kafkaConsumerService.getReceivedMessages());
         }
     }
     
@@ -67,8 +90,10 @@ public class KafkaStepDefinitions {
         boolean messageProduced = kafkaConsumerService.checkMessage(expectedMessage);
         if (messageProduced) {
             System.out.println("The Message is present in Kafka topic");
+            scenario.log("The Message is present in Kafka topic");
         } else {
             System.out.println("The Message is not present in Kafka topic");
+            scenario.log("The Message is not present in Kafka topic");
         }
     }
 
@@ -92,8 +117,10 @@ public class KafkaStepDefinitions {
         boolean messageProduced = kafkaFileService.verifyConsumerReceivesMessage(fileD);
         if (messageProduced) {
             System.out.println("The Transformed Message Kafka topic matches with expected");
+            scenario.log("The Transformed Message Kafka topic matches with expected");
         } else {
             System.out.println("The Transformed Message Kafka topic doesnt matches with expected");
+            scenario.log("The Transformed Message Kafka topic doesnt matches with expected");
         }
     }
     

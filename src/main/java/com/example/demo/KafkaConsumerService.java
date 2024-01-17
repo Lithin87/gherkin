@@ -5,7 +5,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +23,22 @@ private List<String> receivedMessages = new ArrayList<>();
 
     @Autowired
     private final Consumer<String, String> kafkaConsumer = null;
+    
+    Timestamp recordTimestamp;
+
+    public Timestamp getRecordTimestamp() {
+        return recordTimestamp;
+    }
+
+    public void setRecordTimestamp(Instant recordTimestamp) {
+        this.recordTimestamp = Timestamp.from(recordTimestamp);
+    }
+
+    public List<String> getReceivedMessages() {
+        return receivedMessages;
+    }
+
+
 
     public void subscribeConsumerToTopic(String topic) {
        

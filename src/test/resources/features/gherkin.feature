@@ -18,4 +18,3 @@ Feature: Kafka Integration in Spring Boot Application
     When json is retrieved from "testFileTopic" and transformed and sent to "testFileTopicProcessed"
     When a consumer subscribes to "testFileTopicProcessed"
     Then the consumer receives the message equivalent to file "Out_File_1.txt"
- 

@@ -3,7 +3,9 @@
 "salesOrganisation": "9224",
 "validFrom": "20231005",
 "validTo": "99991231",
-"eventType": "INSERT",
+"eventType": "UPDATE",
+"company": "ust";
+"account" : "boots";
 "createdTimestamp": "20231031 17:09:40",
 "updatedTimestamp": ""
 }

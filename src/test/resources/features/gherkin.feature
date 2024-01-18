@@ -1,7 +1,5 @@
 Feature: Kafka Integration in Spring Boot Application
 
-
-
   Scenario: Produce a message to Kafka
     Given a Kafka topic "testTopic" exists in "localhost:9092"
     When a message "testKafkaConsumer" is sent to "testTopic"
@@ -13,8 +11,18 @@ Feature: Kafka Integration in Spring Boot Application
     When a consumer subscribes to "testTopic"
     Then the consumer receives the message "testKafkaConsumer" from "testTopic"
 
-  Scenario: Consume from a File
-    When a file "Inp_File_1.txt" is sent to "testFileTopic"
-    When json is retrieved from "testFileTopic" and transformed and sent to "testFileTopicProcessed"
-    When a consumer subscribes to "testFileTopicProcessed"
+  Scenario: Consume from a topic and send transformed message and verify 
+    When a MX1 sends "Inp_File_1.txt" to "wholeFileTopic"
+    When json is retrieved from "wholeFileTopic" and transformed and sent to "wholeFileTopicProcessed"
+    When a consumer subscribes to "wholeFileTopicProcessed"
     Then the consumer receives the message equivalent to file "Out_File_1.txt"
+
+
+  Scenario: Consume from a topic and send selectively transformed message and verify 
+    Given a MX1 sends "Inp_File_1.txt" to "selectiveFileTopic"
+    When MX2 retrieves from "selectiveFileTopic" and does selective transformation with below data and sends to "selectiveFileTopicProcessed":
+      | eventType   | INSERT |
+      | company  | allianz |
+      | account  | anthem |
+    When a consumer subscribes to "selectiveFileTopicProcessed"
+    Then the consumer receives the message equivalent to file "Out_Field_File_1.txt"

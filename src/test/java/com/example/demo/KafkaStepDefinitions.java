@@ -3,10 +3,13 @@ package com.example.demo;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
+
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class KafkaStepDefinitions {
@@ -98,7 +101,7 @@ public class KafkaStepDefinitions {
     }
 
 
-    @When("a file {string} is sent to {string}")
+    @When("a MX1 sends {string} to {string}")
     public void sendFileToKafka(String file, String topic) {
         kafkaFileService.sendMessage(topic, file);
     }
@@ -123,6 +126,17 @@ public class KafkaStepDefinitions {
             scenario.log("The Transformed Message Kafka topic doesnt matches with expected");
         }
     }
+
+    
+    @When("MX2 retrieves from {string} and does selective transformation with below data and sends to {string}:")
+    public void selectiveFieldUpdation(String topicS, String topicD , DataTable dataTable) {
+        
+        Map<String, String> messages = dataTable.asMap(String.class, String.class);
+        kafkaFileService.consumeSelectiveTransformSendMessage(topicS, topicD,messages);
+
+        messages.entrySet().forEach(s -> {  System.out.println(s.getKey() + "--" + s.getValue()); });
+    }
+
     
 }
 

@@ -23,6 +23,9 @@ private List<String> receivedMessages = new ArrayList<>();
 
     @Autowired
     private final Consumer<String, String> kafkaConsumer = null;
+
+    @Autowired
+    private final ObjectMapper objectMapper = null;
     
     Timestamp recordTimestamp;
 
@@ -70,12 +73,10 @@ private List<String> receivedMessages = new ArrayList<>();
                     .collect(Collectors.toList());
 
                     receivedMessages.addAll(messages);
-                    String gh = receivedMessages.get(receivedMessages.size() -1 );
-
-                    ObjectMapper objectMapper = new ObjectMapper();
-
+                    String lastMessage = receivedMessages.get(receivedMessages.size() -1 );
+                    
                     try {
-                        JsonNode node1 = objectMapper.readTree(gh);
+                        JsonNode node1 = objectMapper.readTree(lastMessage);
                         JsonNode node2 = objectMapper.readTree(message);
 
                         if (node1.equals(node2)) {

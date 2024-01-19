@@ -8,8 +8,10 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
+import org.junit.Assert;
 
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class KafkaStepDefinitions {
@@ -39,7 +41,12 @@ public class KafkaStepDefinitions {
     public void createKafkaTopic(String topic,String bootstrapServers) {
 
         AdminClientTest adminClientTest = new AdminClientTest();
-        adminClientTest.checkTopic( bootstrapServers , topic);
+        boolean checkTopic = adminClientTest.checkTopic( bootstrapServers , topic);
+
+        if (!checkTopic) {
+            Assert.fail("Assertion failed: topic is not created");
+        }
+
     }
 
 
@@ -59,6 +66,7 @@ public class KafkaStepDefinitions {
         } else {
             System.out.println("Message was not produced to Kafka topic");
             scenario.log("Message was not produced to Kafka topic");
+            Assert.fail("Message was not produced to Kafka topic");
         }
     }
 
@@ -133,8 +141,6 @@ public class KafkaStepDefinitions {
         
         Map<String, String> messages = dataTable.asMap(String.class, String.class);
         kafkaFileService.consumeSelectiveTransformSendMessage(topicS, topicD,messages);
-
-        messages.entrySet().forEach(s -> {  System.out.println(s.getKey() + "--" + s.getValue()); });
     }
 
     

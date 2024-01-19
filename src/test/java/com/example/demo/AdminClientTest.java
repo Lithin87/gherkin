@@ -9,13 +9,15 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 
 public class AdminClientTest {
 
-    public  void checkTopic(String bootstrapServers , String topic) {
+    public  boolean checkTopic(String bootstrapServers , String topic) {
         Properties adminClientProps = new Properties();
         adminClientProps.put( AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         
         AdminClient adminClient = AdminClient.create(adminClientProps);
 
             try (adminClient) {
+
+              
 
                 boolean exists = adminClient.listTopics().names().get().contains(topic);
                 if (!exists) {
@@ -28,8 +30,9 @@ public class AdminClientTest {
                     System.out.println("Kafka topic already exists: " + topic);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                return false;
             }
+            return true;
     }
     
 }

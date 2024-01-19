@@ -44,7 +44,7 @@ public class KafkaStepDefinitions {
         boolean checkTopic = adminClientTest.checkTopic( bootstrapServers , topic);
 
         if (!checkTopic) {
-            Assert.fail("Assertion failed: topic is not created");
+            Assert.fail("Topic is not created");
         }
 
     }
@@ -65,7 +65,6 @@ public class KafkaStepDefinitions {
             scenario.log("Message was successfully produced to Kafka topic");
         } else {
             System.out.println("Message was not produced to Kafka topic");
-            scenario.log("Message was not produced to Kafka topic");
             Assert.fail("Message was not produced to Kafka topic");
         }
     }
@@ -83,9 +82,9 @@ public class KafkaStepDefinitions {
             scenario.log("the last updated time is " + kafkaConsumerService.getRecordTimestamp());
         } else {
             System.out.println("The Message is not present in Kafka topic");
-            scenario.log("The Message is not present in Kafka topic");
             scenario.log("the available messages are " + kafkaConsumerService.getReceivedMessages());
             scenario.log("the last updated time is " + kafkaConsumerService.getRecordTimestamp());
+            Assert.fail("The Message is not present in Kafka topic");
         }
     }
     
@@ -104,7 +103,7 @@ public class KafkaStepDefinitions {
             scenario.log("The Message is present in Kafka topic");
         } else {
             System.out.println("The Message is not present in Kafka topic");
-            scenario.log("The Message is not present in Kafka topic");
+            Assert.fail("The Message is not present in Kafka topic");
         }
     }
 
@@ -127,11 +126,11 @@ public class KafkaStepDefinitions {
         
         boolean messageProduced = kafkaFileService.verifyConsumerReceivesMessage(fileD);
         if (messageProduced) {
-            System.out.println("The Transformed Message Kafka topic matches with expected");
-            scenario.log("The Transformed Message Kafka topic matches with expected");
+            System.out.println("The Transformed Message from Kafka topic matches with expected");
+            scenario.log("The Transformed Message from Kafka topic matches with expected");
         } else {
-            System.out.println("The Transformed Message Kafka topic doesnt matches with expected");
-            scenario.log("The Transformed Message Kafka topic doesnt matches with expected");
+            System.out.println("The Transformed Message Kafka topic doesn't match with expected");
+            Assert.fail("The Transformed Message Kafka topic doesn't match with expected");
         }
     }
 

@@ -14,6 +14,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.example.demo.kafkaService.KafkaSenderService;
+import com.example.demo.service.KafkaConsumerService;
+import com.example.demo.service.KafkaFileService;
+
 public class KafkaStepDefinitions {
 
     @Autowired

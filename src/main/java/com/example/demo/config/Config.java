@@ -1,5 +1,5 @@
 
-package com.example.demo;
+package com.example.demo.config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ import java.util.Properties;
 
 
 @Configuration
-public class SpringConfig {
+public class Config {
     
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -35,12 +35,20 @@ public class SpringConfig {
     @Value("${spring.kafka.consumer.client-id}")
     private String consumerClientId;
 
+    @Value("${spring.kafka.client-id}")
+    private String clientID;
+
+    @Value("${spring.kafka.size}")
+    private String kafkasize;
+
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.CLIENT_ID_CONFIG, clientID);
+        configProps.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, kafkasize);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

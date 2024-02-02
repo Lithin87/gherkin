@@ -14,23 +14,23 @@ Feature: Kafka Integration in Spring Boot Application
 
 
   Scenario: Consume from a topic and send transformed message and verify 
-    When a MX1 sends "Inp_File_1.txt" to "wholeFileTopic"
+    When a MX1 sends "Inp_Scn_3.json" to "wholeFileTopic"
     When json is retrieved from "wholeFileTopic" and transformed and sent to "wholeFileTopicProcessed"
     When a consumer subscribes to "wholeFileTopicProcessed"
-    Then the consumer receives the message equivalent to file "Out_File_1.txt"
+    Then the consumer receives the message equivalent to file "Out_Scn_3.json"
 
 
   Scenario: Consume from a topic and send selectively transformed message and verify 
-    Given a MX1 sends "Inp_File_1.txt" to "selectiveFileTopic"
+    Given a MX1 sends "Inp_Scn_3.json" to "selectiveFileTopic"
     When MX2 retrieves from "selectiveFileTopic" and does selective transformation with below data and sends to "selectiveFileTopicProcessed":
       | eventType   | INSERT |
       | company  | allianz |
       | account  | anthem |
     When a consumer subscribes to "selectiveFileTopicProcessed"
-    Then the consumer receives the message equivalent to file "Out_Selective_File_1.txt"
+    Then the consumer receives the message equivalent to file "Out_Selective_Scn_4.json"
 
 
   Scenario: KafkaListener should automatically consume from a topic and send transformed msg to selected partition
-    Given a MX1 sends "DTO_Input.json" to "dev-buk_eapi-testsuite-input-data"
+    Given a MX1 sends "Inp_Dto_Scn_5.json" to "dev-buk_eapi-testsuite-input-data"
     When a consumer subscribes to "dev-buk_eapi-testsuite-output-data" to partition 2
-    Then the consumer receives the message equivalent to file "Out_File_1.txt"
+    Then the consumer receives the message equivalent to file "Out_Dto_Scn_5.json"

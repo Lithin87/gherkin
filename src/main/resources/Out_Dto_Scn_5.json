@@ -1,0 +1,13 @@
+{
+  "tableNumber": "T123",
+  "articleNumber": "A12345",
+  "salesOrganisation": "SO001",
+  "conditionRecordNumber": "CRN001",
+  "validFrom": "2022-01-01",
+  "validTo": "2022-12-31",
+  "conditionType": "Discount",
+  "createdTimestamp": "2022-01-15T12:30:00",
+  "updatedTimestamp": "2022-01-20T08:45:00",
+  "ttl": 30,
+  "eventType": "Update"
+}

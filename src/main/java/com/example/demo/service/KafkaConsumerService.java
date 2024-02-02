@@ -78,12 +78,12 @@ private List<String> receivedMessages = new ArrayList<>();
                     .collect(Collectors.toList());
 
                     receivedMessages.addAll(messages);
-                    // System.out.println("\n TOTAL MSG : " + receivedMessages );
+                    System.out.println("\n TOTAL MSG : " + receivedMessages );
                     String lastMessage = "";
                     try {
                         lastMessage = receivedMessages.get(receivedMessages.size() -1 );
                   
-                        // System.out.println("\n => " + lastMessage + " === " + message);
+                        System.out.println("\n => " + lastMessage + " === " + message);
 
                         JsonNode node1 = objectMapper.readTree(lastMessage);
                         JsonNode node2 = objectMapper.readTree(message);
@@ -95,7 +95,7 @@ private List<String> receivedMessages = new ArrayList<>();
                         }
                     }catch (Exception e)
                     {
-                        // System.out.println("\n NOT JSON => " + lastMessage + " === " + message);
+                        System.out.println("\n NOT JSON => " + lastMessage + " === " + message);
                         if(lastMessage.equals(message))
                         return true;
                         else

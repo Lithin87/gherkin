@@ -25,4 +25,9 @@ Feature: Kafka Integration in Spring Boot Application
       | company  | allianz |
       | account  | anthem |
     When a consumer subscribes to "selectiveFileTopicProcessed"
-    Then the consumer receives the message equivalent to file "Out_Field_File_1.txt"
+    Then the consumer receives the message equivalent to file "Out_Selective_File_1.txt"
+
+  Scenario: KafkaListener should automatically consume from a topic and send transformed msg to selected partition
+    Given a MX1 sends "DTO_Input.json" to "dev-buk_eapi-testsuite-input-data"
+    When a consumer subscribes to "dev-buk_eapi-testsuite-output-data" to partition 2
+    Then the consumer receives the message equivalent to file "Out_File_1.txt"

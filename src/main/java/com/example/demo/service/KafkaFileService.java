@@ -77,7 +77,7 @@ public class KafkaFileService {
     
     private String getLastMessage(String topicS) {
         kafkaConsumerService.unsubscribeConsumerFromTopic();
-        kafkaConsumerService.subscribeConsumerToTopic(topicS);
+        kafkaConsumerService.subscribeConsumerToTopic(topicS, -1);
         List<String> allMessage = kafkaConsumerService.getAllMessage();
         String lastNode = allMessage.get(allMessage.size()-1) ;
         return lastNode;

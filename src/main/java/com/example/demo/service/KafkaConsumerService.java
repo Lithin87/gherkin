@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,10 +44,13 @@ private List<String> receivedMessages = new ArrayList<>();
 
 
 
-    public void subscribeConsumerToTopic(String topic) {
+    public void subscribeConsumerToTopic(String topic , int partition) {
        
         try {
             kafkaConsumer.unsubscribe();
+            if(partition > -1)
+            kafkaConsumer.assign(Collections.singletonList(new TopicPartition(topic, partition)));
+            else
             kafkaConsumer.subscribe(Collections.singletonList(topic));
             System.out.println("Consumer subscribed to Kafka topic: " + topic);
 

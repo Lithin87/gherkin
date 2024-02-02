@@ -62,7 +62,7 @@ public class KafkaStepDefinitions {
     @Then("the message {string} is successfully written to {string}")
     public void verifyMessageProduced(String expectedMessage, String topic) {
 
-        kafkaConsumerService.subscribeConsumerToTopic(topic);
+        kafkaConsumerService.subscribeConsumerToTopic(topic, -1);
         boolean messageProduced = kafkaConsumerService.checkMessage(expectedMessage);
         if (messageProduced) {
             System.out.println("Message was successfully produced to Kafka topic");
@@ -94,9 +94,13 @@ public class KafkaStepDefinitions {
     
     @When("a consumer subscribes to {string}")
     public void subscribeConsumerToTopic(String topic) {
-        kafkaConsumerService.subscribeConsumerToTopic(topic);
+        kafkaConsumerService.subscribeConsumerToTopic(topic, -1);
     }
     
+    @When("a consumer subscribes to {string} with partition {int}")
+    public void subscribeConsumerToTopicPartition(String topic, int partition ) {
+        kafkaConsumerService.subscribeConsumerToTopic(topic, partition);
+    }
     
     @Then("the consumer receives the message {string} from {string}")
     public void verifyConsumerReceivesMessage(String expectedMessage , String topic) {

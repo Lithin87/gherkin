@@ -97,8 +97,8 @@ public class KafkaStepDefinitions {
         kafkaConsumerService.subscribeConsumerToTopic(topic, -1);
     }
     
-    @When("a consumer subscribes to {string} with partition {int}")
-    public void subscribeConsumerToTopicPartition(String topic, int partition ) {
+    @When("a consumer subscribes to {string} to partition {int}")
+    public void subscribeConsumerToTopicPartition(String topic, Integer partition ) {
         kafkaConsumerService.subscribeConsumerToTopic(topic, partition);
     }
     

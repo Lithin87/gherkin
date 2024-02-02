@@ -4,8 +4,8 @@
 "validFrom": "20231005",
 "validTo": "99991231",
 "eventType": "UPDATE",
-"company": "ust";
-"account" : "boots";
+"company": "ust",
+"account" : "boots",
 "createdTimestamp": "20231031 17:09:40",
 "updatedTimestamp": ""
 }

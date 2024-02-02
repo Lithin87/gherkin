@@ -24,9 +24,9 @@ public class KafkaTransformerService {
         if (jsonNode.has("eventType")) {
             String eventType = jsonNode.get("eventType").asText();
             if ("INSERT".equals(eventType)) {
-                ((ObjectNode) jsonNode).put("articleNumber", "7777777");
-            } else if ("UPDATE".equals(eventType)) {
                 ((ObjectNode) jsonNode).put("articleNumber", "888888");
+            } else if ("UPDATE".equals(eventType)) {
+                ((ObjectNode) jsonNode).put("articleNumber", "7777777");
             }
         }
         String modifiedJsonString = objectMapper.writeValueAsString(jsonNode);

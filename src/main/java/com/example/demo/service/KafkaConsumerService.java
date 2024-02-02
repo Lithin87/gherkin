@@ -46,6 +46,7 @@ private List<String> receivedMessages = new ArrayList<>();
     public void subscribeConsumerToTopic(String topic) {
        
         try {
+            kafkaConsumer.unsubscribe();
             kafkaConsumer.subscribe(Collections.singletonList(topic));
             System.out.println("Consumer subscribed to Kafka topic: " + topic);
 
@@ -66,16 +67,20 @@ private List<String> receivedMessages = new ArrayList<>();
 
     public boolean checkMessage(String message) {
     
-        ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(1000));
+        ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(5000));
 
             List<String> messages = StreamSupport.stream(records.spliterator(), false)
                     .map(record -> record.value())
                     .collect(Collectors.toList());
 
                     receivedMessages.addAll(messages);
-                    String lastMessage = receivedMessages.get(receivedMessages.size() -1 );
-                    
+                    // System.out.println("\n TOTAL MSG : " + receivedMessages );
+                    String lastMessage = "";
                     try {
+                        lastMessage = receivedMessages.get(receivedMessages.size() -1 );
+                  
+                        // System.out.println("\n => " + lastMessage + " === " + message);
+
                         JsonNode node1 = objectMapper.readTree(lastMessage);
                         JsonNode node2 = objectMapper.readTree(message);
 
@@ -86,6 +91,10 @@ private List<String> receivedMessages = new ArrayList<>();
                         }
                     }catch (Exception e)
                     {
+                        // System.out.println("\n NOT JSON => " + lastMessage + " === " + message);
+                        if(lastMessage.equals(message))
+                        return true;
+                        else
                         return false;
                     }
         }
@@ -93,7 +102,7 @@ private List<String> receivedMessages = new ArrayList<>();
 
         public List<String> getAllMessage() {
     
-            ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(1000));
+            ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(5000));
     
                 List<String> messages = StreamSupport.stream(records.spliterator(), false)
                         .map(record -> record.value())

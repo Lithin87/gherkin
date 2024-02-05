@@ -1,9 +1,7 @@
 package com.example.demo.kafkaService;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import com.example.demo.service.KafkaServiceImplementation;
 

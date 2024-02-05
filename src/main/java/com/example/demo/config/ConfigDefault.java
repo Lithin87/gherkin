@@ -24,7 +24,7 @@ import java.util.Properties;
 
 
 @Configuration
-public class Config {
+public class ConfigDefault {
     
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;

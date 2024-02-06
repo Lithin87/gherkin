@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.cosmosdb.AzureCosmosDB;
 import com.example.demo.dto.RootDto;
 import com.example.demo.kafkaService.KafkaSenderService;
 import com.example.demo.model.Root;
@@ -17,6 +18,9 @@ public class KafkaServiceImplementation {
 
     @Autowired
     private KafkaSenderService kafkaSend;
+
+    @Autowired
+    private AzureCosmosDB azureCosmosDB;
 
     @Value("${spring.kafka.consumer.promotion.outputTopic}")
     private String outputTopicName;
@@ -41,8 +45,8 @@ public class KafkaServiceImplementation {
         rootDto.setUpdatedTimestamp((String) root.getUpdatedTimestamp()); // Check type
         rootDto.setTtl(root.getTtl());
 
-        if (isValidArticle(articleNumber)) {
-            // Do something when the article is not valid
+        if (articleNumber != null) {
+           
             rootDto.setTableNumber(root.getTableNumber());
             rootDto.setArticleNumber(articleNumber);
 
@@ -59,9 +63,15 @@ public class KafkaServiceImplementation {
             }
         }
     }
-    private boolean isValidArticle(String articleNumber) {
-        return articleNumber != null;
+ 
+    public void cosmosPersist(String kafkaInput) throws JsonProcessingException {
+       
+        Root root = objectMapper.readValue(kafkaInput, Root.class);
+        String articleNumber = root.getArticleNumber();
+        azureCosmosDB.persist(root,articleNumber );
+
     }
+
 }
 
 

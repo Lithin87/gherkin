@@ -10,6 +10,7 @@ import com.azure.cosmos.CosmosContainer;
 import com.azure.cosmos.CosmosDatabase;
 import com.azure.cosmos.implementation.ConnectionPolicy;
 import com.azure.cosmos.models.CosmosContainerProperties;
+import com.azure.cosmos.models.CosmosContainerResponse;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.CosmosItemResponse;
 import com.example.demo.model.Root;
@@ -99,11 +100,15 @@ public class AzureCosmosDB {
 
         //  Create container if not exists
         //  <CreateContainerIfNotExists>
-        CosmosContainerProperties containerProperties =
-            new CosmosContainerProperties(containerName, "/lastName");
+        CosmosContainerProperties containerProperties =  new CosmosContainerProperties(containerName, "/lastName");
 
         //  Create container with 400 RU/s
-        // container = database.createContainerIfNotExists(containerProperties, 400).getContainer();
+        CosmosContainerResponse containerResponse = database.createContainerIfNotExists(containerProperties);
+        
+        CosmosContainerProperties createdContainerProperties = containerResponse.getProperties();
+        String containerName = createdContainerProperties.getId();
+        System.out.println("Container created successfully: " + containerName);
+        // getContainer();
         //  </CreateContainerIfNotExists>
 
         System.out.println("Checking container " + container.getId() + " completed!\n");

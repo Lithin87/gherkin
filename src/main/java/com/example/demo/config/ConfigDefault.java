@@ -29,7 +29,7 @@ public class ConfigDefault {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
     
-    @Value("${spring.kafka.consumer.group-id}")
+    @Value("${spring.kafka.consumer.service.group-id}")
     private String consumerGroupId;
 
     @Value("${spring.kafka.consumer.client-id}")

@@ -3,116 +3,63 @@
 
 package com.example.demo.cosmosdb;
 
-import com.azure.cosmos.ConsistencyLevel;
-import com.azure.cosmos.CosmosClient;
-import com.azure.cosmos.CosmosClientBuilder;
-import com.azure.cosmos.CosmosContainer;
-import com.azure.cosmos.CosmosDatabase;
-import com.azure.cosmos.implementation.ConnectionPolicy;
-import com.azure.cosmos.models.CosmosContainerProperties;
-import com.azure.cosmos.models.CosmosContainerResponse;
-import com.azure.cosmos.models.CosmosItemRequestOptions;
-import com.azure.cosmos.models.CosmosItemResponse;
+import com.azure.cosmos.*;
 import com.example.demo.model.Root;
-import com.google.common.collect.Lists;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AzureCosmosDB {
 
-    private CosmosClient client;
-
-    private final String databaseName = "dbc";
-    private final String containerName = "itemsc";
-
     private CosmosDatabase database;
     private CosmosContainer container;
 
-    public void close() {
-        client.close();
-    }
+    @Value("${azure.cosmos.uri}")
+    private String cosmosUri;
+
+    @Value("${azure.cosmos.key}")
+    private String cosmosKey;   
+
+    @Value("${azure.cosmos.database}")
+    private String databaseName;
+
+    @Value("${azure.cosmos.container}")
+    private String containerName;   
 
 
     public  void persist(Root root, String args) {
+
+         try (CosmosClient client = new CosmosClientBuilder().endpoint(cosmosUri).key(cosmosKey).buildClient()) {
       
-        try {
-            getStartedDemo(root, args);
-            System.out.println("Demo complete, please hold while resources are released");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(String.format("Cosmos getStarted failed with %s", e));
-        } finally {
-            System.out.println("Closing the client");
-            // this.close();
-        }
-       
-    }
 
+        // ConnectionPolicy defaultPolicy = ConnectionPolicy.getDefaultPolicy();
+        // defaultPolicy.setUserAgentSuffix("CosmosDBJavaQuickstart");
+        // defaultPolicy.setPreferredRegions(Lists.newArrayList("West US"));
 
-    private void getStartedDemo(Root root, String args) throws Exception {
-        System.out.println("Using Azure Cosmos DB endpoint: " + AccountSettings.HOST);
+     
+    
+        client.createDatabaseIfNotExists(databaseName);
+        database  = client.getDatabase(databaseName);
 
-        ConnectionPolicy defaultPolicy = ConnectionPolicy.getDefaultPolicy();
-        defaultPolicy.setUserAgentSuffix("CosmosDBJavaQuickstart");
-        //  Setting the preferred location to Cosmos DB Account region
-        //  West US is just an example. User should set preferred location to the Cosmos DB region closest to the application
-        defaultPolicy.setPreferredRegions(Lists.newArrayList("West US"));
+        database.createContainerIfNotExists(containerName, "/articleNumber");
+        container  = database.getContainer(containerName);
 
-        //  Create sync client
-        //  <CreateSyncClient>
-        client = new CosmosClientBuilder()
-        .endpoint(AccountSettings.HOST)
-        .key(AccountSettings.MASTER_KEY)
-        .consistencyLevel(ConsistencyLevel.EVENTUAL)
-        .buildClient();
-
-
-        //  </CreateSyncClient>
-
-        createDatabaseIfNotExists();
-        createContainerIfNotExists();
         // scaleContainer();
 
-        createFamilies(root, args);
+
+        container.createItem(root);
+        System.out.println("Created  items with total request ");
+
 
         // System.out.println("Reading items.");
         // readItems(familiesToCreate);
 
         // System.out.println("Querying items.");
         // queryItems();
+        } 
     }
 
-    private void createDatabaseIfNotExists() throws Exception {
-        System.out.println("Create database " + databaseName + " if not exists.");
 
-        //  Create database if not exists
-        //  <CreateDatabaseIfNotExists>
-      client.createDatabaseIfNotExists(databaseName);
-        database = client.getDatabase(databaseName);
-        //  </CreateDatabaseIfNotExists>
-
-        System.out.println("Checking database " + database.getId() + " completed!\n");
-    }
-
-    private void createContainerIfNotExists() throws Exception {
-        System.out.println("Create container " + containerName + " if not exists.");
-
-        //  Create container if not exists
-        //  <CreateContainerIfNotExists>
-        CosmosContainerProperties containerProperties =  new CosmosContainerProperties(containerName, "/lastName");
-
-        //  Create container with 400 RU/s
-        CosmosContainerResponse containerResponse = database.createContainerIfNotExists(containerProperties);
-        
-        CosmosContainerProperties createdContainerProperties = containerResponse.getProperties();
-        String containerName = createdContainerProperties.getId();
-        System.out.println("Container created successfully: " + containerName);
-        // getContainer();
-        //  </CreateContainerIfNotExists>
-
-        System.out.println("Checking container " + container.getId() + " completed!\n");
-    }
     
     // private void scaleContainer() throws Exception {
     //     System.out.println("Scale container " + containerName + " to 500 RU/s.");
@@ -124,19 +71,6 @@ public class AzureCosmosDB {
     //     System.out.println("Scaled container to " + currentThroughput + " completed!\n");
     // }
 
-    private void createFamilies(Root root, String args) throws Exception {
-        double totalRequestCharge = 0;
- 
-            CosmosItemRequestOptions cosmosItemRequestOptions = new CosmosItemRequestOptions();
-   
-            CosmosItemResponse<Root> item = container.createItem(root);
-
-
-            totalRequestCharge += item.getRequestCharge();
-        
-        System.out.println(String.format("Created  items with total request " +
-                "charge of %.2f", totalRequestCharge));
-    }
 
     // private void readItems(ArrayList<Family> familiesToCreate) {
     //     //  Using partition key for point read scenarios.

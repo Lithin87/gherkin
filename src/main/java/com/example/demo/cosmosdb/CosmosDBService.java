@@ -5,11 +5,23 @@ package com.example.demo.cosmosdb;
 
 import com.azure.cosmos.*;
 import com.example.demo.model.Root;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.azure.cosmos.models.*;
+import com.azure.cosmos.util.CosmosPagedIterable;
+
+
 @Service
-public class AzureCosmosDB {
+public class CosmosDBService {
 
     private CosmosDatabase database;
     private CosmosContainer container;
@@ -26,50 +38,56 @@ public class AzureCosmosDB {
     @Value("${azure.cosmos.container}")
     private String containerName;   
 
+    @Autowired
+    private final ObjectMapper objectMapper = null;
 
-    public  void persist(Root root, String args) {
-
-         try (CosmosClient client = new CosmosClientBuilder().endpoint(cosmosUri).key(cosmosKey).buildClient()) {
-      
-
-        // ConnectionPolicy defaultPolicy = ConnectionPolicy.getDefaultPolicy();
-        // defaultPolicy.setUserAgentSuffix("CosmosDBJavaQuickstart");
-        // defaultPolicy.setPreferredRegions(Lists.newArrayList("West US"));
-
+    public  void persist(Root root) {
+        CosmosClient client = new CosmosClientBuilder().endpoint(cosmosUri).key(cosmosKey).buildClient();
+        try {
      
-    
         client.createDatabaseIfNotExists(databaseName);
         database  = client.getDatabase(databaseName);
 
         database.createContainerIfNotExists(containerName, "/articleNumber");
         container  = database.getContainer(containerName);
 
-        // scaleContainer();
-
-
         container.createItem(root);
-        System.out.println("Created  items with total request ");
-
-
+     
         // System.out.println("Reading items.");
         // readItems(familiesToCreate);
 
-        // System.out.println("Querying items.");
-        // queryItems();
-        } 
+        } catch ( Exception e)
+        {
+            System.out.println("Querying Error."+ e);
+        }
     }
 
 
-    
-    // private void scaleContainer() throws Exception {
-    //     System.out.println("Scale container " + containerName + " to 500 RU/s.");
+    public boolean verify(String container2, String fileContent) throws JsonMappingException, JsonProcessingException {
 
-    //     // You can scale the throughput (RU/s) of your container up and down to meet the needs of the workload. Learn more: https://aka.ms/cosmos-request-units
-    //     int currentThroughput = container.readThroughput();
-    //     currentThroughput = currentThroughput + 100;
-    //     container.replaceProvisionedThroughput(currentThroughput);
-    //     System.out.println("Scaled container to " + currentThroughput + " completed!\n");
-    // }
+        CosmosClient client = new CosmosClientBuilder().endpoint(cosmosUri).key(cosmosKey).buildClient();
+        database  = client.getDatabase(databaseName);
+        container  = database.getContainer(containerName);
+        System.out.println("Querying items.");
+        
+        CosmosPagedIterable<Root> queryResults  = container.queryItems(
+        "SELECT * FROM c  WHERE c.articleNumber = 'A12345' ", new CosmosQueryRequestOptions(), Root.class);
+
+        List<Root> dbRecords = new ArrayList<>();
+        queryResults.forEach(dbRecords::add); 
+
+        Root root = objectMapper.readValue(fileContent, Root.class);
+
+    for (Root dbRecord : dbRecords) {
+
+        if (dbRecord.equals(root)) {
+            return true;
+        }
+    }
+            return false;
+    }
+
+
 
 
     // private void readItems(ArrayList<Family> familiesToCreate) {
@@ -77,6 +95,7 @@ public class AzureCosmosDB {
     //     //  This will help fast look up of items because of partition key
     //     familiesToCreate.forEach(family -> {
     //         //  <ReadItem>
+
     //         CosmosItem item = container.getItem(family.getId(), family.getLastName());
     //         try {
     //             CosmosItemResponse read = item.read(new CosmosItemRequestOptions(family.getLastName()));
@@ -93,8 +112,9 @@ public class AzureCosmosDB {
     // }
 
     // private void queryItems() {
-    //     //  <QueryItems>
-    //     // Set some common query options
+
+
+
     //     FeedOptions queryOptions = new FeedOptions();
     //     queryOptions.maxItemCount(10);
     //     queryOptions.setEnableCrossPartitionQuery(true);
@@ -115,6 +135,6 @@ public class AzureCosmosDB {
     //             .map(Resource::getId)
     //             .collect(Collectors.toList()));
     //     });
-    //     //  </QueryItems>
+
     // }
 }

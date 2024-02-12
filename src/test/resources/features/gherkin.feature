@@ -1,6 +1,6 @@
 Feature: Kafka Integration in Spring Boot Application
 
-  Scenario: Produce a message to Kafka
+Scenario: Produce a message to Kafka
     Given a Kafka topic "testTopic" exists in "localhost:9092"
     When a message "testKafkaConsumer" is sent to "testTopic"
     Then the message "testKafkaConsumer" is successfully written to "testTopic"
@@ -32,23 +32,25 @@ Feature: Kafka Integration in Spring Boot Application
 
   Scenario: KafkaListener should automatically consume from a topic and send transformed msg to selected partition
     Given a MX1 sends "Inp_Dto_Scn_5.json" to "dev-buk_eapi-testsuite-input-data"
-    When a consumer subscribes to "dev-buk_eapi-testsuite-output-data" to partition 2
+    When a consumer subscribes to "dev-buk_eapi-testsuite-output-data" from partition 2
     Then the consumer receives the message equivalent to file "Out_Dto_Scn_5.json"
 
 
   Scenario: KafkaListener should automatically consume from a topic and send transformed msg to selected partition
     Given a MX1 sends "Inp_Dto_Scn_6.json" to "dev-buk_eapi-testsuite-input-data"
-    When a consumer subscribes to "dev-buk_eapi-testsuite-output-data" to partition 1
-    Then the consumer receives the message equivalent to file "Out_Dto_Scn_5.json"
+    When a consumer subscribes to "dev-buk_eapi-testsuite-output-data" from partition 0
+    Then the consumer receives the message equivalent to file "Out_Dto_Scn_6.json"
 
 
   Scenario: KafkaListener should automatically consume from a topic and send transformed msg to selected partition
     Given a MX1 sends "Inp_Dto_Scn_7.json" to "dev-buk_eapi-testsuite-input-data"
-    When a consumer subscribes to "dev-buk_eapi-testsuite-output-data" to partition 0
-    Then the consumer receives the message equivalent to file "Out_Dto_Scn_5.json"
+    When a consumer subscribes to "dev-buk_eapi-testsuite-output-data" from partition 1
+    Then the consumer receives the message equivalent to file "Out_Dto_Scn_7.json"
 
 
   Scenario: KafkaListener should automatically consume from a cosmosdb and send transformed msg to topic
     Given a MX1 sends "Inp_Dto_Scn_5.json" to "dev-buk_eapi-cosmos-input-data"
+    When a consumer fetches from cosmosdb container "Account" it should be equivalent to file "Out_Cosmos_Scn_8.json"
+
   
 

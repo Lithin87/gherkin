@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import com.example.demo.cosmosdb.CosmosDBService;
+
 import org.springframework.core.io.Resource;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,6 +24,9 @@ public class KafkaFileService {
 
     @Autowired
     private final KafkaTransformerService   kafkaTransformerService = null;
+
+    @Autowired
+    private final CosmosDBService cosmosDBService = null;
 
     
     public void sendMessage(String topic, String fileName) {
@@ -62,7 +67,18 @@ public class KafkaFileService {
         return false;
     }
 
-    
+    public boolean verifyCosmosReceivedMessage(String container , String fileD )  {
+
+        try {
+            String fileContent = getFileContent(fileD);
+            return cosmosDBService.verify(container , fileContent);
+
+        } catch (IOException e) {
+            System.out.println("Error Occured while verifying transformation of file message"+ e);
+        }
+        return false;
+    }
+
     public void consumeSelectiveTransformSendMessage(String topicS, String topicD, Map<String, String> fieldList) {
         try {
             String lastNode = getLastMessage(topicS);
@@ -89,4 +105,5 @@ public class KafkaFileService {
         String fileContent = new String(fileBytes);
         return fileContent;
     }
+
 }

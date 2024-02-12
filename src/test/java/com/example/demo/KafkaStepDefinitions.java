@@ -127,7 +127,14 @@ public class KafkaStepDefinitions {
         kafkaFileService.consumeProcessSendMessage(topicS, topicD);
     }
 
+    @When("MX2 retrieves from {string} and does selective transformation with below data and sends to {string}:")
+    public void selectiveFieldUpdation(String topicS, String topicD , DataTable dataTable) {
 
+        Map<String, String> messages = dataTable.asMap(String.class, String.class);
+        kafkaFileService.consumeSelectiveTransformSendMessage(topicS, topicD,messages);
+
+        messages.entrySet().forEach(s -> {  System.out.println(s.getKey() + "--" + s.getValue()); });
+    }
 
     @Then("the consumer receives the message equivalent to file {string}")
     public void verifyConsumerReceivesMessage(String fileD ) {
@@ -143,13 +150,11 @@ public class KafkaStepDefinitions {
     }
 
     
-    @When("MX2 retrieves from {string} and does selective transformation with below data and sends to {string}:")
-    public void selectiveFieldUpdation(String topicS, String topicD , DataTable dataTable) {
-        
-        Map<String, String> messages = dataTable.asMap(String.class, String.class);
-        kafkaFileService.consumeSelectiveTransformSendMessage(topicS, topicD,messages);
-    }
 
-    
+    @When("a consumer fetches from cosmosdb container {string} it should be equivalent to file {string}")     
+    public void verifyCosmosUpdation(String container , String fileD) {
+        
+        kafkaFileService.verifyCosmosReceivedMessage(container , fileD);
+    }
 }
 

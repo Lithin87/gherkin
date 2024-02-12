@@ -1,11 +1,15 @@
 package com.example.demo.service;
 
-import com.example.demo.cosmosdb.AzureCosmosDB;
+import com.example.demo.cosmosdb.CosmosDBService;
 import com.example.demo.dto.RootDto;
 import com.example.demo.kafkaService.KafkaSenderService;
 import com.example.demo.model.Root;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +24,10 @@ public class KafkaServiceImplementation {
     private KafkaSenderService kafkaSend;
 
     @Autowired
-    private AzureCosmosDB azureCosmosDB;
+    private CosmosDBService cosmosDBService;
+
+    @Autowired
+    private KafkaTransformerService kafkaTransformerService;
 
     @Value("${spring.kafka.consumer.promotion.outputTopic}")
     private String outputTopicName;
@@ -28,8 +35,7 @@ public class KafkaServiceImplementation {
     private ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     public void passpayload(String kafkaInput) throws JsonProcessingException {
-        RootDto rootDto = new RootDto(); // Initialize RootDto
-
+        RootDto rootDto = new RootDto(); 
         Root root = objectMapper.readValue(kafkaInput, Root.class);
         String articleNumber = root.getArticleNumber();
 
@@ -64,11 +70,17 @@ public class KafkaServiceImplementation {
         }
     }
  
-    public void cosmosPersist(String kafkaInput) throws JsonProcessingException {
+    public void cosmosTransformPersist(String kafkaInput) throws IOException {
        
-        Root root = objectMapper.readValue(kafkaInput, Root.class);
-        String articleNumber = root.getArticleNumber();
-        azureCosmosDB.persist(root,articleNumber );
+        Map<String, String> fieldList = new HashMap<>();
+        fieldList.put("eventType", "INSERT");
+        fieldList.put("articleType", "cosmos");
+        fieldList.put("salesOrganisation", "qrech");
+        fieldList.put("customerNumber", "WBA");
+
+        String transformedKafkaInput =  kafkaTransformerService.selectiveFieldUpdation(kafkaInput, fieldList);
+        Root root = objectMapper.readValue(transformedKafkaInput, Root.class);
+        cosmosDBService.persist(root );
 
     }
 

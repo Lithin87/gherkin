@@ -29,12 +29,12 @@ public class KafkaServiceImplementation {
     @Autowired
     private KafkaTransformerService kafkaTransformerService;
 
-    @Value("${spring.kafka.consumer.promotion.outputTopic}")
+    @Value("${spring.kafka.consumer.partition.outputTopic}")
     private String outputTopicName;
 
     private ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    public void passpayload(String kafkaInput) throws JsonProcessingException {
+    public void specificPartition(String kafkaInput) throws JsonProcessingException {
         RootDto rootDto = new RootDto(); 
         Root root = objectMapper.readValue(kafkaInput, Root.class);
         String articleNumber = root.getArticleNumber();

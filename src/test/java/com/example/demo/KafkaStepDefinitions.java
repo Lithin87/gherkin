@@ -13,10 +13,13 @@ import org.junit.Assert;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 
 import com.example.demo.kafkaService.KafkaSenderService;
 import com.example.demo.service.KafkaConsumerService;
 import com.example.demo.service.KafkaFileService;
+import com.example.demo.service.KafkaServiceImplementation;
+
 
 public class KafkaStepDefinitions {
 
@@ -29,7 +32,11 @@ public class KafkaStepDefinitions {
     @Autowired
     private  KafkaConsumerService kafkaConsumerService ;
 
+    @Autowired
+    KafkaServiceImplementation kafkaServiceImplementation;
+
     private Scenario scenario;
+
 
     @Before
     public void before(Scenario scenario) {
@@ -156,5 +163,45 @@ public class KafkaStepDefinitions {
         
         kafkaFileService.verifyCosmosReceivedMessage(container , fileD);
     }
+
+
+    @When("a kafka listener listens at topic {string} with group-id {string} for {string}")
+    public void fetchFromCosmosDBContainer(String topicsName, String groupId, String partition) {
+
+        System.setProperty("spring.kafka.consumer.cosmos.topicName", topicsName);
+        System.setProperty("spring.kafka.consumer.cosmos.group-id", groupId);
+        System.setProperty("spring.kafka.consumer.function", partition);
+
+    }
+
+    
+    @KafkaListener(topics = "${spring.kafka.consumer.cosmos.topicName}", groupId = "${spring.kafka.consumer.cosmos.group-id}"
+    ,  containerFactory = "kafkaListenerContainerFactory" )
+    public void listen1( String KafkaInput) throws Exception 
+    {
+        try { 
+            System.out.println("Received Message cosmos :"+KafkaInput);
+        String bn  = System.getProperty("spring.kafka.consumer.function");
+        switch(bn) {
+        case "cosmos" :
+          System.out.println("COSMOS");
+          kafkaServiceImplementation.cosmosTransformPersist(KafkaInput);
+          break;
+        case "partition" : 
+          System.out.println("partition");
+            kafkaServiceImplementation.specificPartition(KafkaInput);
+            break;
+        default : 
+        System.out.println("COSMOS");
+        break;
+    }
+    } catch ( Exception e)
+    {
+        System.out.println("Cosmos Exception " + e);
+    }
+    // Thread.sleep(3000);
 }
+
+}
+
 

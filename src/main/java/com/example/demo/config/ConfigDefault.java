@@ -10,14 +10,21 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.config.SaslConfigs;
+import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import java.util.Properties;
 
@@ -60,7 +67,7 @@ public class ConfigDefault {
 
     @Bean
     public Consumer<String, String> kafkaConsumer() {
-        Properties consumerProps = new Properties();
+         Properties consumerProps = new Properties();
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
         consumerProps.put(ConsumerConfig.CLIENT_ID_CONFIG, consumerClientId);
@@ -70,6 +77,27 @@ public class ConfigDefault {
 
         return new KafkaConsumer<>(consumerProps);
     }
+
+    @Bean
+public ConsumerFactory<String, String> consumerFactory() {
+    Map<String, Object> config = new HashMap<>();
+    config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    config.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
+    config.put(ConsumerConfig.CLIENT_ID_CONFIG, consumerClientId);
+    config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+    config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+
+    return new DefaultKafkaConsumerFactory<String,String>(config, new StringDeserializer(), new StringDeserializer());
+}
+
+    
+@Bean
+public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(KafkaOperations<String, String> template) {
+    ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(consumerFactory());
+    return factory;
+}
 
     @Bean
     public ObjectMapper objectMapper() {

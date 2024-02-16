@@ -69,6 +69,7 @@ public ConsumerFactory<String, String> consumerFactory() {
     config.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, saslssl);
     config.put(SslConfigs.DEFAULT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM, https);
     config.put(SaslConfigs.SASL_MECHANISM, plain);
+    config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     config.put(SaslConfigs.SASL_JAAS_CONFIG, getKafkaJassConfig());
     config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
     config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);

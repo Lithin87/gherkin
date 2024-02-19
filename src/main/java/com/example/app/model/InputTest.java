@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class InputTest{
 
 
-    public String id;
     public String inputTopic;
     public String outputTopic;
     public String inputMsgJsonList;

@@ -161,17 +161,24 @@ public class KafkaStepDefinitions {
     @When("a consumer fetches from cosmosdb container {string} it should be equivalent to file {string}")     
     public void verifyCosmosUpdation(String container , String fileD) {
         
-        kafkaFileService.verifyCosmosReceivedMessage(container , fileD);
+        boolean messageProduced = kafkaFileService.verifyCosmosReceivedMessage(container , fileD);
+        if (messageProduced) {
+            System.out.println("The Cosmos DB Message matches with expected");
+            scenario.log("The Cosmos DB Message matches with expected");
+        } else {
+            System.out.println("The Cosmos DB Message doesn't matches with expected");
+            Assert.fail("The Cosmos DB Message doesn't matches with expected");
+        }
     }
 
 
     @When("a kafka listener listens at topic {string} with group-id {string} for {string}")
-    public void fetchFromCosmosDBContainer(String topicsName, String groupId, String partition) {
+    public void fetchFromCosmosDBContainer(String topicsName, String groupId, String partition) throws InterruptedException {
 
         System.setProperty("spring.kafka.consumer.cosmos.topicName", topicsName);
         System.setProperty("spring.kafka.consumer.cosmos.group-id", groupId);
         System.setProperty("spring.kafka.consumer.function", partition);
-
+        Thread.sleep(2000);
     }
 
     
@@ -184,7 +191,7 @@ public class KafkaStepDefinitions {
         String bn  = System.getProperty("spring.kafka.consumer.function");
         switch(bn) {
         case "cosmos" :
-          System.out.println("COSMOS");
+          System.out.println("COSMOS 1");
           kafkaServiceImplementation.cosmosTransformPersist(KafkaInput);
           break;
         case "partition" : 
@@ -192,14 +199,14 @@ public class KafkaStepDefinitions {
             kafkaServiceImplementation.specificPartition(KafkaInput);
             break;
         default : 
-        System.out.println("COSMOS");
+        System.out.println("COSMOS 2");
         break;
     }
     } catch ( Exception e)
     {
         System.out.println("Cosmos Exception " + e);
     }
-    // Thread.sleep(3000);
+  
 }
 
 }

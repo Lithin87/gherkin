@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import org.apache.kafka.common.errors.InterruptException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -67,16 +68,17 @@ public class KafkaFileService {
         return false;
     }
 
-    public boolean verifyCosmosReceivedMessage(String container , String fileD )  {
+    public boolean verifyCosmosReceivedMessage(String container , String fileD )   {
 
         try {
             String fileContent = getFileContent(fileD);
             return cosmosDBService.verify(container , fileContent);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Error Occured while verifying transformation of file message"+ e);
+            return false;
         }
-        return false;
+        
     }
 
     public void consumeSelectiveTransformSendMessage(String topicS, String topicD, Map<String, String> fieldList) {

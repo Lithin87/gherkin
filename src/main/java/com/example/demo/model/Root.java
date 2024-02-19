@@ -2,10 +2,12 @@ package com.example.demo.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = {"_rid", "_self", "_etag", "_attachments", "_ts"})
 public class Root{
     public String id;
     public String usage;

@@ -72,6 +72,7 @@ public class KafkaServiceImplementation {
  
     public void cosmosTransformPersist(String kafkaInput) throws IOException {
        
+        System.out.println("\n Persist  1");
         Map<String, String> fieldList = new HashMap<>();
         fieldList.put("eventType", "INSERT");
         fieldList.put("articleType", "cosmos");

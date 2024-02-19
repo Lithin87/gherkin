@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.kafka.common.errors.InterruptException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,8 @@ public class CosmosDBService {
     private final ObjectMapper objectMapper = null;
 
     public  void persist(Root root) {
+    System.out.println("\n Persist  2");
+
         CosmosClient client = new CosmosClientBuilder().endpoint(cosmosUri).key(cosmosKey).buildClient();
         try {
      
@@ -53,8 +56,6 @@ public class CosmosDBService {
 
         container.createItem(root);
      
-        // System.out.println("Reading items.");
-        // readItems(familiesToCreate);
 
         } catch ( Exception e)
         {
@@ -63,7 +64,7 @@ public class CosmosDBService {
     }
 
 
-    public boolean verify(String container2, String fileContent) throws JsonMappingException, JsonProcessingException {
+    public boolean verify(String container2, String fileContent) throws JsonMappingException, JsonProcessingException , InterruptException, InterruptedException{
 
         CosmosClient client = new CosmosClientBuilder().endpoint(cosmosUri).key(cosmosKey).buildClient();
         database  = client.getDatabase(databaseName);
@@ -73,12 +74,15 @@ public class CosmosDBService {
         CosmosPagedIterable<Root> queryResults  = container.queryItems(
         "SELECT * FROM c  WHERE c.articleNumber = 'A12345' ", new CosmosQueryRequestOptions(), Root.class);
 
+        Thread.sleep(3000);
         List<Root> dbRecords = new ArrayList<>();
         queryResults.forEach(dbRecords::add); 
 
         Root root = objectMapper.readValue(fileContent, Root.class);
 
     for (Root dbRecord : dbRecords) {
+
+        System.out.println("\n dbRecord "+ dbRecord +"\n ROOTS :"+ root );
 
         if (dbRecord.equals(root)) {
             return true;

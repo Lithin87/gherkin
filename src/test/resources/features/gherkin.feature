@@ -30,7 +30,7 @@ Feature: Kafka Integration in Spring Boot Application
     Then the consumer receives the message equivalent to file "Out_Selective_Scn_4.json"
 
 
-  Scenario: KafkaListener should automatically consume from a topic and send transformed msg to selected partition
+ Scenario: KafkaListener should automatically consume from a topic and send transformed msg to selected partition
     When a kafka listener listens at topic "dev-buk_eapi-partition-input-data" with group-id "partition-group" for "partition"
     Given a MX1 sends "Inp_Dto_Scn_5.json" to "dev-buk_eapi-partition-input-data"
     When a consumer subscribes to "dev-buk_eapi-partition-output-data" from partition 2
@@ -49,7 +49,7 @@ Feature: Kafka Integration in Spring Boot Application
     Given a MX1 sends "Inp_Dto_Scn_7.json" to "dev-buk_eapi-partition-input-data"
     When a consumer subscribes to "dev-buk_eapi-partition-output-data" from partition 1
     Then the consumer receives the message equivalent to file "Out_Dto_Scn_7_part1.json"
-
+    
 
   Scenario: KafkaListener should automatically consume from a cosmosdb and send transformed msg to topic
     When a kafka listener listens at topic "dev-buk_eapi-cosmos-input-data" with group-id "cosmos-group" for "cosmos"

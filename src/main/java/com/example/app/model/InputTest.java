@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.app.model;
 
 
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class Root{
+public class InputTest{
 
 
     public String id;

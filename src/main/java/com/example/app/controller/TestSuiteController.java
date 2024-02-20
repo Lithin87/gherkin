@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.app.model.InputTest;
+import com.example.app.model.TestInput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,19 +18,19 @@ public class TestSuiteController {
     ObjectMapper objectMapper;
 
     @PostMapping
-    InputTest testKafkaMessage(@RequestBody String jsonData)
+    TestInput testKafkaMessage(@RequestBody String jsonData)
     {
     
-        InputTest jsonNode = null;
+        TestInput inputTest = null;
         try {
-            jsonNode = objectMapper.readValue(jsonData , InputTest.class);
+            inputTest = objectMapper.readValue(jsonData , TestInput.class);
         } catch (JsonProcessingException e) {
             System.out.println(" Json parsing Error " + e);
         }
 
 
-        System.out.println("Value: " + jsonNode);
-        return jsonNode;
+        System.out.println("Value: " + inputTest);
+        return inputTest;
 
     }
     

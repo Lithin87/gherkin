@@ -4,7 +4,6 @@ package com.example.app.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,12 +18,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-
 import org.apache.kafka.common.serialization.StringDeserializer;
-import java.util.Properties;
+
 
 @Configuration
 public class ConfigDefault {
@@ -32,7 +28,7 @@ public class ConfigDefault {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${spring.kafka.consumer.service.group-id}")
+    @Value("${spring.kafka.consumer.group-id}")
     private String consumerGroupId;
 
     @Value("${spring.kafka.consumer.client-id}")

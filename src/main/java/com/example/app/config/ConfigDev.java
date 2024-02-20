@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.app.config;
 
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -41,23 +41,23 @@ private String topicName = "";
 @Value("${spring.kafka.consumer.group-id}")
 private String kafkaConsumerGroupid = "";
 
-@Value("${spring.kafka.properties.security.protocol}")
-private String saslssl = "";
+// @Value("${spring.kafka.properties.security.protocol}")
+// private String saslssl = "";
 
-@Value("${spring.kafka.properties.sasl.mechanism}")
-private String plain = "";
+// @Value("${spring.kafka.properties.sasl.mechanism}")
+// private String plain = "";
 
-@Value("${spring.kafka.properties.ssl.endpoint.identification.algorithm}")
-private String https = "";
+// @Value("${spring.kafka.properties.ssl.endpoint.identification.algorithm}")
+// private String https = "";
 
-@Value("${spring.kafka.properties.sasl.jaas.config}")
-private String kafkaJassConfigUri;
+// @Value("${spring.kafka.properties.sasl.jaas.config}")
+// private String kafkaJassConfigUri;
 
-@Value("${spring.kafka.username-path}")
-private String kafkaUserNamePath;
+// @Value("${spring.kafka.username-path}")
+// private String kafkaUserNamePath;
 
-@Value("${spring.kafka.password-path}")
-private String kafkaPasswordPath;
+// @Value("${spring.kafka.password-path}")
+// private String kafkaPasswordPath;
 
 
 @Bean

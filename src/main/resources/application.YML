@@ -1,0 +1,13 @@
+spring:
+  kafka:
+    size : 2097152
+    bootstrap-servers: localhost:9092
+    client-id: test-client-group
+    consumer:
+      group-id: consumer-group
+      client-id: client-group
+      partition: 
+        outputTopic: dev-buk_eapi-partition-output-data
+ 
+    
+

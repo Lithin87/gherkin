@@ -1,5 +1,6 @@
 package com.example.app.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,15 +10,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
+
 @RestController
 public class TestSuiteController {
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @PostMapping
     InputTest testKafkaMessage(@RequestBody String jsonData)
     {
-        // String jsonString = "{\"key\": \"value\"}"; 
-
-        ObjectMapper objectMapper = new ObjectMapper();
+    
         InputTest jsonNode = null;
         try {
             jsonNode = objectMapper.readValue(jsonData , InputTest.class);

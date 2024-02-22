@@ -18,6 +18,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
@@ -28,7 +29,7 @@ public class ConfigDefault {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${spring.kafka.consumer.group-id}")
+    @Value("${spring.kafka.consumer.service.group-id}")
     private String consumerGroupId;
 
     @Value("${spring.kafka.consumer.client-id}")

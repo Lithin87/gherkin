@@ -7,7 +7,9 @@ spring:
       group-id: consumer-group
       client-id: client-group
       partition: 
-        outputTopic: dev-buk_eapi-partition-output-data
+        outputTopic: partition-output-data
+        topicName: xxx
+        group-id: partition-group-id
  
     
 

@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @Component
 public class TestInput{
 
-
-    public String inputTopic;
-    public String outputTopic;
-    public String inputMsgJsonList;
-    public String outputMsgJsonList;
+    private String inputTopic;
+    private String outputTopic;
+    private String inputMsgJson;
+    private String outputMsgJson;
+    
 }

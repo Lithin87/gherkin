@@ -10,8 +10,10 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.stereotype.Service;
 
-import com.example.app.manager.KafkaListenerManager;
+import com.example.app.model.InputMsgJson;
 import com.example.app.service.ValidationTemplateInterface;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service("kafka")
 public class KafkaValidationImpl extends ValidationTemplateInterface {
@@ -20,12 +22,12 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
     private final KafkaTemplate<String, String> kafkaTemplate = null;
 
     @Autowired
-    private KafkaListenerManager kafkaListenerManager;
-
-    @Autowired
     private ConcurrentKafkaListenerContainerFactory<String, String> listenerContainerFactory;
 
-    private List<String> processed = new ArrayList<String>();
+    @Autowired
+    ObjectMapper objectMapper;
+
+    private List<InputMsgJson> processed = new ArrayList<InputMsgJson>();
 
     @Override
     protected void messageSend(String inputTopic, String jsonContent) {
@@ -35,16 +37,21 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
 
 
     @Override
-    protected List<String> messageListen(String outputTopic) {
+    protected List<InputMsgJson> messageListen(String outputTopic) {
         try {
-            
+        
             ConcurrentMessageListenerContainer<String, String> container = listenerContainerFactory
                     .createContainer(outputTopic);
 
             MessageListener<String, String> messageListener = record -> {
                 String message = record.value();
-                System.out.println("Received Delhi : " + message);
-                processed.add(message);
+                InputMsgJson root = null;
+                try {
+                    root = objectMapper.readValue(message,InputMsgJson.class );
+                } catch (JsonProcessingException e) {
+                   
+                }            
+                processed.add(root);
             };
 
             container.setupMessageListener(messageListener);
@@ -52,14 +59,14 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
 
             System.out.println("\n Came in kafka messageListen " + outputTopic);
 
-        } catch (Exception e) {
+        } catch ( Exception  e) {
             System.out.println("\n Error occurred in kafka listening" + e.getMessage());
         }
         return processed;
     }
 
     @Override
-    public boolean messageVerify(List<String> ProcessedOutput, String ProvidedOutput) {
+    public boolean messageVerify(List<InputMsgJson> ProcessedOutput, InputMsgJson ProvidedOutput) {
         try {
             Thread.sleep(9000);
 

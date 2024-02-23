@@ -15,9 +15,16 @@ import com.azure.cosmos.CosmosDatabase;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.util.CosmosPagedIterable;
 import com.example.app.service.ValidationTemplateInterface;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.app.model.InputMsgJson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service("cosmos")
 public class CosmosValidationImpl extends ValidationTemplateInterface {
+
+    private static final Logger logger = LoggerFactory.getLogger(CosmosValidationImpl.class);
+
 
     @Autowired
     private final KafkaTemplate<String, String> kafkaTemplate = null;
@@ -37,38 +44,48 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
     @Value("${azure.cosmos.container}")
     private String containerName;   
 
-    private List<String> processed = new ArrayList<String>();
+    @Autowired
+    ObjectMapper objectMapper;
+
+    private List<InputMsgJson> processed = new ArrayList<InputMsgJson>();
 
     @Override
     protected void messageSend(String inputTopic, String jsonContent) {
         kafkaTemplate.send(inputTopic, jsonContent);
-                System.out.println("\n Came in cosmos sending ");
+        logger.info("\n At cosmos sending ");
     }
 
 
     @Override
-    protected List<String> messageListen(String outputTopic) {
+    protected List<InputMsgJson> messageListen(String outputTopic) {
+
+        String[] databaseLocation = outputTopic.split(":");
+
+        String databaseName = databaseLocation[0]; 
+        String containerName = databaseLocation[1]; 
+
         try {
-            
+            Thread.sleep(9000);
         CosmosClient client = new CosmosClientBuilder().endpoint(cosmosUri).key(cosmosKey).buildClient();
         database  = client.getDatabase(databaseName);
         container  = database.getContainer(containerName);
         System.out.println("Querying items.");
         
-        CosmosPagedIterable<String> queryResults  = container.queryItems(
-        "SELECT * FROM c ", new CosmosQueryRequestOptions(), String.class);
+        CosmosPagedIterable<InputMsgJson> queryResults  = container.queryItems(
+        "SELECT * FROM c ", new CosmosQueryRequestOptions(), InputMsgJson.class);
 
         Thread.sleep(3000);
         queryResults.forEach(processed::add); 
 
         } catch (Exception e) {
-            System.out.println("\n Error occurred in cosmos listening" + e.getMessage());
+            logger.error("\n Error occurred in cosmos listening" + e.getMessage());
         }
+        logger.info("\n \n Final listener retreived items."+processed);
         return processed;
     }
 
     @Override
-    public boolean messageVerify(List<String> ProcessedOutput, String ProvidedOutput) {
+    public boolean messageVerify(List<InputMsgJson> ProcessedOutput, InputMsgJson ProvidedOutput) {
         try {
             Thread.sleep(9000);
 
@@ -81,7 +98,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
                 return processed.contains(ProvidedOutput);
             }
         } catch (Exception e) {
-            System.out.println("\n Error occurred in cosmos verifying" + e.getMessage());
+            logger.error("\n Error occurred in cosmos verifying" + e.getMessage());
             return false;
         }
     }
@@ -90,7 +107,11 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
     protected void simulate(String outputTopic, String ProvidedOutput) {
         System.out.println("\n Came in cosmos simulate ");
 
-        System.out.println("\n Persist ");
+        String[] databaseLocation = outputTopic.split(":");
+
+        String databaseName = databaseLocation[0]; 
+        String containerName = databaseLocation[1]; 
+
 
         CosmosClient client = new CosmosClientBuilder().endpoint(cosmosUri).key(cosmosKey).buildClient();
         try {
@@ -101,12 +122,15 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
         database.createContainerIfNotExists(containerName, "/articleNumber");
         container  = database.getContainer(containerName);
 
-        // container.createItem(ProvidedOutput);
+        System.out.println("\n Passed value "+ProvidedOutput);
+        InputMsgJson root = objectMapper.readValue(ProvidedOutput, InputMsgJson.class);
+
+        container.createItem(root);
      
 
         } catch ( Exception e)
         {
-            System.out.println("Simulate Persisting Error."+ e);
+            logger.error("Simulate Persisting Error."+ e);
         }
 
     }

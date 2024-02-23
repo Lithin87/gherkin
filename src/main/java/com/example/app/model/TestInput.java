@@ -1,6 +1,8 @@
 package com.example.app.model;
 
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -17,5 +19,6 @@ public class TestInput{
     private String outputTopic;
     private String inputMsgJson;
     private String outputMsgJson;
+    private List<String> database;
     
 }

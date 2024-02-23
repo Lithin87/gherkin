@@ -1,5 +1,5 @@
 package com.example.app.controller;
-import com.example.app.service.impl.VerficationService;
+import com.example.app.service.impl.ValidateService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestSuiteController {
 
     @Autowired
-    private VerficationService verificationService;
+    private ValidateService verificationService;
 
     @PostMapping
     String testKafkaMessage(@RequestBody String jsonData)

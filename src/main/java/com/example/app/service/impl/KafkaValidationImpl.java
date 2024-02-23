@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import com.example.app.manager.KafkaListenerManager;
 import com.example.app.service.ValidationTemplateInterface;
 
-@Service
-public class KafkaValidationInterfaceImpl extends ValidationTemplateInterface {
+@Service("kafka")
+public class KafkaValidationImpl extends ValidationTemplateInterface {
 
     @Autowired
     private final KafkaTemplate<String, String> kafkaTemplate = null;
@@ -30,7 +30,7 @@ public class KafkaValidationInterfaceImpl extends ValidationTemplateInterface {
     @Override
     protected void messageSend(String inputTopic, String jsonContent) {
         kafkaTemplate.send(inputTopic, jsonContent);
-                System.out.println("\n Came in sending ");
+                System.out.println("\n Came in kafka sending ");
     }
 
 
@@ -50,10 +50,10 @@ public class KafkaValidationInterfaceImpl extends ValidationTemplateInterface {
             container.setupMessageListener(messageListener);
             container.start();
 
-            System.out.println("\n Came in messageListen " + outputTopic);
+            System.out.println("\n Came in kafka messageListen " + outputTopic);
 
         } catch (Exception e) {
-            System.out.println("\n Error occurred in listening" + e.getMessage());
+            System.out.println("\n Error occurred in kafka listening" + e.getMessage());
         }
         return processed;
     }
@@ -72,14 +72,14 @@ public class KafkaValidationInterfaceImpl extends ValidationTemplateInterface {
                 return processed.contains(ProvidedOutput);
             }
         } catch (Exception e) {
-            System.out.println("\n Error occurred in verifying" + e.getMessage());
+            System.out.println("\n Error occurred in kafka verifying" + e.getMessage());
             return false;
         }
     }
 
     @Override
     protected void simulate(String outputTopic, String ProvidedOutput) {
-        System.out.println("\n Came in simulate");
+        System.out.println("\n Came in kafka simulate");
         kafkaTemplate.send(outputTopic, ProvidedOutput);
     }
 

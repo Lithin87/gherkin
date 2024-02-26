@@ -41,9 +41,9 @@ public abstract class ValidationTemplateInterface {
     
         List<InputMsgJson> processedOutput =  null;
         try {
-            processedOutput = messageListen( outputTopic);
             messageSend( inputTopic, objectMapper.writeValueAsString(InputMsgJson));
             simulate(outputTopic ,  objectMapper.writeValueAsString(ProvidedOutput));
+            processedOutput = messageListen( outputTopic);
         
             } catch (JsonProcessingException e) {
             System.out.println("Exception in JSON PArsing " + e );

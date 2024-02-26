@@ -65,7 +65,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
         String containerName = databaseLocation[1]; 
 
         try {
-            Thread.sleep(9000);
+            Thread.sleep(2000);
         CosmosClient client = new CosmosClientBuilder().endpoint(cosmosUri).key(cosmosKey).buildClient();
         database  = client.getDatabase(databaseName);
         container  = database.getContainer(containerName);
@@ -87,7 +87,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
     @Override
     public boolean messageVerify(List<InputMsgJson> ProcessedOutput, InputMsgJson ProvidedOutput) {
         try {
-            Thread.sleep(9000);
+            Thread.sleep(5000);
 
             if (processed == null) {
                 System.out.println("\n No Output message received");
@@ -122,10 +122,10 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
         database.createContainerIfNotExists(containerName, "/articleNumber");
         container  = database.getContainer(containerName);
 
-        System.out.println("\n Passed value "+ProvidedOutput);
         InputMsgJson root = objectMapper.readValue(ProvidedOutput, InputMsgJson.class);
-
+        
         container.createItem(root);
+        System.out.println("\n Passed value "+ProvidedOutput);
      
 
         } catch ( Exception e)

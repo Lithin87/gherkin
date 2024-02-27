@@ -1,13 +1,24 @@
 package com.example.app.service.impl;
 
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.MessageListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.example.app.model.InputMsgJson;
@@ -22,7 +33,10 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
     private final KafkaTemplate<String, String> kafkaTemplate = null;
 
     @Autowired
-    private ConcurrentKafkaListenerContainerFactory<String, String> listenerContainerFactory;
+    private ConsumerFactory<String, String> consumerFactory;
+
+    @Value("${spring.kafka.consumer.partition.partition-num}")
+    private int partition_no;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -39,29 +53,37 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
     @Override
     protected List<InputMsgJson> messageListen(String outputTopic) {
         try {
-        
-            ConcurrentMessageListenerContainer<String, String> container = listenerContainerFactory
-                    .createContainer(outputTopic);
 
-            MessageListener<String, String> messageListener = record -> {
+      KafkaConsumer<String, String> consumer = (KafkaConsumer<String, String>) consumerFactory.createConsumer();
+
+      consumer.subscribe(Set.of(outputTopic));
+
+      consumer.poll(Duration.ofMillis(100)); 
+        for (TopicPartition partition : consumer.assignment()) {
+            consumer.seekToEnd(Collections.singleton(partition));
+        }
+
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(6000));
+            for (ConsumerRecord<String, String> record : records) {
                 String message = record.value();
+                System.out.printf("\n Offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
                 InputMsgJson root = null;
                 try {
                     root = objectMapper.readValue(message,InputMsgJson.class );
                 } catch (JsonProcessingException e) {
+                    System.out.println("Parsing Error in Listen");
                    
-                }            
+                }   
+
                 processed.add(root);
-            };
-
-            container.setupMessageListener(messageListener);
-            container.start();
-
+            }
+    
+            consumer.close();
             System.out.println("\n Came in kafka messageListen " + outputTopic);
 
         } catch ( Exception  e) {
             System.out.println("\n Error occurred in kafka listening" + e.getMessage());
-        }
+        };
         return processed;
     }
 

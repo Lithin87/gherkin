@@ -28,7 +28,7 @@ public class ValidateService {
             String qualifier =  (inputTest.getDatabase() == null) ? "kafka" : "cosmos" ;
             ValidationTemplateInterface validationTemplateImpl = (ValidationTemplateInterface) context.getBean(qualifier);
 
-            String result = validationTemplateImpl.execute(inputTest) == true ? "PASS"  : "FAIL" ;
+            String result = validationTemplateImpl.execute(inputTest) == true ? "TEST PASS"  : "TEST FAIL" ;
             System.out.println("TEST RESULT : " + result);
             return result;
         } catch (Exception e) {

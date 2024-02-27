@@ -15,16 +15,9 @@ public abstract class ValidationTemplateInterface {
      @Autowired
     ObjectMapper objectMapper;
     
-   
     protected  abstract void messageSend(String inputTopic, String jsonContent);
-    
-    
     protected  abstract void simulate(String outputTopic, String ProvidedOutput);
-
-   
     protected  abstract List<InputMsgJson> messageListen(String outputTopic);
-
-   
     protected  abstract boolean messageVerify(List<InputMsgJson>  ProcessedOutput, InputMsgJson ProvidedOutput);
 
     public  final  boolean execute( TestInput testInput ) {
@@ -41,9 +34,9 @@ public abstract class ValidationTemplateInterface {
     
         List<InputMsgJson> processedOutput =  null;
         try {
+            processedOutput = messageListen( outputTopic);
             messageSend( inputTopic, objectMapper.writeValueAsString(InputMsgJson));
             simulate(outputTopic ,  objectMapper.writeValueAsString(ProvidedOutput));
-            processedOutput = messageListen( outputTopic);
         
             } catch (JsonProcessingException e) {
             System.out.println("Exception in JSON PArsing " + e );

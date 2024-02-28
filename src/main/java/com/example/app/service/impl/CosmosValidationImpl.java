@@ -63,16 +63,20 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
 
         String databaseName = databaseLocation[0]; 
         String containerName = databaseLocation[1]; 
+        String id = databaseLocation[2]; 
 
         try {
-            Thread.sleep(2000);
+            Thread.sleep(3000);
         CosmosClient client = new CosmosClientBuilder().endpoint(cosmosUri).key(cosmosKey).buildClient();
         database  = client.getDatabase(databaseName);
         container  = database.getContainer(containerName);
-        System.out.println("Querying items.");
+        System.out.println("\n Querying items.");
         
-        CosmosPagedIterable<InputMsgJson> queryResults  = container.queryItems(
-        "SELECT * FROM c ", new CosmosQueryRequestOptions(), InputMsgJson.class);
+        // String query = String.format("SELECT * FROM c ");
+        String query = String.format("SELECT * FROM c WHERE c.id = '%s'", id);
+        System.out.println("\n Querying items."+query);
+
+        CosmosPagedIterable<InputMsgJson> queryResults  = container.queryItems(query, new CosmosQueryRequestOptions(), InputMsgJson.class);
 
         Thread.sleep(3000);
         queryResults.forEach(processed::add); 
@@ -119,7 +123,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
         client.createDatabaseIfNotExists(databaseName);
         database  = client.getDatabase(databaseName);
 
-        database.createContainerIfNotExists(containerName, "/articleNumber");
+        database.createContainerIfNotExists(containerName, "/id");
         container  = database.getContainer(containerName);
 
         InputMsgJson root = objectMapper.readValue(ProvidedOutput, InputMsgJson.class);

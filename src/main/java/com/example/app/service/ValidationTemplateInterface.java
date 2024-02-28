@@ -26,22 +26,33 @@ public abstract class ValidationTemplateInterface {
         String outputTopic = testInput.getOutputTopic();
         InputMsgJson InputMsgJson = testInput.getInputMsgJson();
         InputMsgJson ProvidedOutput = testInput.getOutputMsgJson();
+        List<InputMsgJson> processedOutput =  null;
+
+        try {
+
         if(outputTopic == null)
          {  
-            String databaseLocation = String.join(":", testInput.getDatabase()); 
-           outputTopic = databaseLocation;
-         }
+            String dbName = testInput.getDatabaseName();
+            String tbleName= testInput.getContainerName();
+            String id = ProvidedOutput.getId();
+            outputTopic = String.join(":", dbName, tbleName, id);
+
+            messageSend( inputTopic, objectMapper.writeValueAsString(InputMsgJson));
+            simulate(outputTopic ,  objectMapper.writeValueAsString(ProvidedOutput));
+            processedOutput = messageListen( outputTopic);
+            return messageVerify( processedOutput,  ProvidedOutput);
+
+         }else{
     
-        List<InputMsgJson> processedOutput =  null;
-        try {
             processedOutput = messageListen( outputTopic);
             messageSend( inputTopic, objectMapper.writeValueAsString(InputMsgJson));
             simulate(outputTopic ,  objectMapper.writeValueAsString(ProvidedOutput));
-        
+            return messageVerify( processedOutput,  ProvidedOutput);
+         }
             } catch (JsonProcessingException e) {
-            System.out.println("Exception in JSON PArsing " + e );
+            System.out.println("Exception in JSON Parsing " + e );
+            return false;
         }
-        return messageVerify( processedOutput,  ProvidedOutput);
     }
 }
 

@@ -25,7 +25,7 @@ public class ValidateService {
             inputTest = objectMapper.readValue(jsonData , TestInput.class);
             System.out.println("Value: " + inputTest);
 
-            String qualifier =  (inputTest.getDatabase() == null) ? "kafka" : "cosmos" ;
+            String qualifier =  (inputTest.getOutputTopic() == null) ? "cosmos" : "kafka" ;
             ValidationTemplateInterface validationTemplateImpl = (ValidationTemplateInterface) context.getBean(qualifier);
 
             String result = validationTemplateImpl.execute(inputTest) == true ? "TEST PASS"  : "TEST FAIL" ;

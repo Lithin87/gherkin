@@ -51,12 +51,7 @@ public class ConfigDefault {
     private static final int PARTITIONS = 3;
     private static final short REPLICATION_FACTOR = 1;
 
-    // @Bean
-    // public KafkaAdmin kafkaAdmin() {
-    //     Map<String, Object> configs = new HashMap<>();
-    //     configs.put("bootstrap.servers", "localhost:9092");
-    //     return new KafkaAdmin(configs);
-    // }
+
 
 
     @Bean
@@ -71,7 +66,7 @@ public class ConfigDefault {
 
     
     @Bean
-    @Lazy(false)
+@Lazy(false)
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
@@ -90,7 +85,7 @@ public class ConfigDefault {
     }
 
     @Bean
-    public ConsumerFactory<String, String> consumerFactory() {
+        public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);

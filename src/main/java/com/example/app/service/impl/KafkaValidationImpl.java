@@ -1,5 +1,7 @@
 package com.example.app.service.impl;
 
+import static org.mockito.ArgumentMatchers.nullable;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,27 +61,32 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
             consumer.seekToEnd(Collections.singleton(partition));
         }
 
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(6000));
-            for (ConsumerRecord<String, String> record : records) {
+        ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(6000));
+                if(records.isEmpty())
+                {records = consumer.poll(Duration.ofMillis(4000));
+                  System.out.println("\n kafka messageListen LOOP  :  " + records);
+                }
+                       for (ConsumerRecord<String, String> record : records) {
                 String message = record.value();
-                System.out.printf("\n Offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+                // System.out.println("\n kafka messageListen records 1 :  " + message);
+  
                 InputMsgJson root = null;
                 try {
                     root = objectMapper.readValue(message,InputMsgJson.class );
+                    // System.out.println("\n kafka messageListen records 2 :  " + root);
                 } catch (JsonProcessingException e) {
                     System.out.println("Parsing Error in Listen");
-                   
                 }   
-
                 processed.add(root);
             }
-    
             consumer.close();
-            System.out.println("\n Came in kafka messageListen " + outputTopic);
-
+           
         } catch ( Exception  e) {
             System.out.println("\n Error occurred in kafka listening" + e.getMessage());
         };
+
+        System.out.println("\n\n Came in kafka messageListen :  " + processed);
+
         return processed;
     }
 
@@ -87,16 +94,9 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
     @Async
     public boolean messageVerify(List<InputMsgJson> ProcessedOutput, InputMsgJson ProvidedOutput) {
         try {
-            Thread.sleep(9000);
-
-            if (processed == null) {
-                System.out.println("\n No Output message received");
-                return false;
-            } else {
                 System.out.println("\n 1"+ processed );
                 System.out.println("\n 2"+ ProvidedOutput);
                 return processed.contains(ProvidedOutput);
-            }
         } catch (Exception e) {
             System.out.println("\n Error occurred in kafka verifying" + e.getMessage());
             return false;

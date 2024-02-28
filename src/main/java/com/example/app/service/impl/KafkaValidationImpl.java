@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.example.app.model.InputMsgJson;
 import com.example.app.service.ValidationTemplateInterface;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service("kafka")
@@ -37,7 +38,7 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
     @Autowired
     ObjectMapper objectMapper;
 
-    private List<InputMsgJson> processed = new ArrayList<InputMsgJson>();
+    private List<JsonNode> processed = new ArrayList<JsonNode>();
 
     @Override
     @Async
@@ -49,7 +50,7 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
 
     @Override
     @Async
-    protected List<InputMsgJson> messageListen(String outputTopic) {
+    protected List<JsonNode> messageListen(String outputTopic) {
         try {
 
       KafkaConsumer<String, String> consumer = (KafkaConsumer<String, String>) consumerFactory.createConsumer();
@@ -70,9 +71,9 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
                 String message = record.value();
                 // System.out.println("\n kafka messageListen records 1 :  " + message);
   
-                InputMsgJson root = null;
+                JsonNode root = null;
                 try {
-                    root = objectMapper.readValue(message,InputMsgJson.class );
+                    root = objectMapper.readTree(message );
                     // System.out.println("\n kafka messageListen records 2 :  " + root);
                 } catch (JsonProcessingException e) {
                     System.out.println("Parsing Error in Listen");
@@ -92,7 +93,7 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
 
     @Override
     @Async
-    public boolean messageVerify(List<InputMsgJson> ProcessedOutput, InputMsgJson ProvidedOutput) {
+    public boolean messageVerify(List<JsonNode> ProcessedOutput, JsonNode ProvidedOutput) {
         try {
                 System.out.println("\n 1"+ processed );
                 System.out.println("\n 2"+ ProvidedOutput);

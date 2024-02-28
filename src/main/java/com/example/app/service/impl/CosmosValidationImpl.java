@@ -1,7 +1,11 @@
 package com.example.app.service.impl;
 
+import static org.mockito.ArgumentMatchers.anyDouble;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +19,7 @@ import com.azure.cosmos.CosmosDatabase;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.util.CosmosPagedIterable;
 import com.example.app.service.ValidationTemplateInterface;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.app.model.InputMsgJson;
 import org.slf4j.Logger;
@@ -47,7 +52,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
     @Autowired
     ObjectMapper objectMapper;
 
-    private List<InputMsgJson> processed = new ArrayList<InputMsgJson>();
+    private List<JsonNode> processed = new ArrayList<JsonNode>();
 
     @Override
     protected void messageSend(String inputTopic, String jsonContent) {
@@ -57,7 +62,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
 
 
     @Override
-    protected List<InputMsgJson> messageListen(String outputTopic) {
+    protected List<JsonNode> messageListen(String outputTopic) {
 
         String[] databaseLocation = outputTopic.split(":");
 
@@ -76,10 +81,23 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
         String query = String.format("SELECT * FROM c WHERE c.id = '%s'", id);
         System.out.println("\n Querying items."+query);
 
-        CosmosPagedIterable<InputMsgJson> queryResults  = container.queryItems(query, new CosmosQueryRequestOptions(), InputMsgJson.class);
+        CosmosPagedIterable<JsonNode> queryResults  = container.queryItems(query, new CosmosQueryRequestOptions(), JsonNode.class);
+
+
+
+        for (JsonNode result : queryResults) {
+
+            Iterator<Map.Entry<String, JsonNode>> fieldsIterator = result.fields();
+            while (fieldsIterator.hasNext()) {
+                Map.Entry<String, JsonNode> field = fieldsIterator.next();
+                if (field.getKey().startsWith("_")) {
+                    fieldsIterator.remove();
+                }
+            }
+            processed.add(result);
+        }
 
         Thread.sleep(3000);
-        queryResults.forEach(processed::add); 
 
         } catch (Exception e) {
             logger.error("\n Error occurred in cosmos listening" + e.getMessage());
@@ -89,7 +107,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
     }
 
     @Override
-    public boolean messageVerify(List<InputMsgJson> ProcessedOutput, InputMsgJson ProvidedOutput) {
+    public boolean messageVerify(List<JsonNode> ProcessedOutput, JsonNode ProvidedOutput) {
         try {
             Thread.sleep(5000);
 

@@ -6,19 +6,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.kafka.listener.MessageListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.example.app.model.InputMsgJson;
@@ -35,8 +29,7 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
     @Autowired
     private ConsumerFactory<String, String> consumerFactory;
 
-    @Value("${spring.kafka.consumer.partition.partition-num}")
-    private int partition_no;
+
 
     @Autowired
     ObjectMapper objectMapper;

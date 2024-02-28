@@ -48,6 +48,7 @@ public class ConfigDefault {
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.CLIENT_ID_CONFIG, clientID);
+        configProps.put(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, false);
         configProps.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, kafkasize);
         return new DefaultKafkaProducerFactory<>(configProps);
     }

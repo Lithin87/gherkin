@@ -2,15 +2,11 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
+      properties:
+        allow.auto.create.topics: false
       service:
         group-id: consumer-group
       client-id: test-client-group
-      partition:
-        outputTopic: dev-buk_eapi-partition-output-data
-        group-id: cosmos_group
-        topicName: outputTopic1
-        function: cosmos
-        partition-num: 3
     client-id: eapi_testSuit_data
     size: 2097152
 azure:

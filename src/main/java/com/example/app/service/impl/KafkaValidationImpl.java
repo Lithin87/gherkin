@@ -13,6 +13,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.example.app.model.InputMsgJson;
@@ -37,6 +38,7 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
     private List<InputMsgJson> processed = new ArrayList<InputMsgJson>();
 
     @Override
+    @Async
     protected void messageSend(String inputTopic, String jsonContent) {
         kafkaTemplate.send(inputTopic, jsonContent);
                 System.out.println("\n Came in kafka sending ");
@@ -44,6 +46,7 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
 
 
     @Override
+    @Async
     protected List<InputMsgJson> messageListen(String outputTopic) {
         try {
 
@@ -81,6 +84,7 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
     }
 
     @Override
+    @Async
     public boolean messageVerify(List<InputMsgJson> ProcessedOutput, InputMsgJson ProvidedOutput) {
         try {
             Thread.sleep(9000);
@@ -100,9 +104,10 @@ public class KafkaValidationImpl extends ValidationTemplateInterface {
     }
 
     @Override
+    @Async
     protected void simulate(String outputTopic, String ProvidedOutput) {
-        System.out.println("\n Came in kafka simulate");
+                System.out.println("\n Came in kafka simulate");
         kafkaTemplate.send(outputTopic, ProvidedOutput);
-    }
+        }
 
 }

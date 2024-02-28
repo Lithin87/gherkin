@@ -7,8 +7,10 @@ spring:
       service:
         group-id: consumer-group
       client-id: test-client-group
-    client-id: eapi_testSuit_data
+    client-id: producer_client
     size: 2097152
+    admin:
+      enabled: true
 azure:
   cosmos:
     uri: https://localhost:8081

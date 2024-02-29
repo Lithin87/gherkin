@@ -52,7 +52,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
     @Autowired
     ObjectMapper objectMapper;
 
-    private List<JsonNode> processed = new ArrayList<JsonNode>();
+    private JsonNode processed = null;
 
     @Override
     protected void messageSend(String inputTopic, String jsonContent) {
@@ -62,7 +62,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
 
 
     @Override
-    protected List<JsonNode> messageListen(String outputTopic) {
+    protected JsonNode messageListen(String outputTopic) {
 
         String[] databaseLocation = outputTopic.split(":");
 
@@ -94,7 +94,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
                     fieldsIterator.remove();
                 }
             }
-            processed.add(result);
+            processed = result;
         }
 
         Thread.sleep(3000);
@@ -107,7 +107,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
     }
 
     @Override
-    public boolean messageVerify(List<JsonNode> ProcessedOutput, JsonNode ProvidedOutput) {
+    public boolean messageVerify(JsonNode ProcessedOutput, JsonNode ProvidedOutput) {
         try {
             Thread.sleep(5000);
 
@@ -117,7 +117,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
             } else {
                 System.out.println("\n 1"+ processed );
                 System.out.println("\n 2"+ ProvidedOutput);
-                return processed.contains(ProvidedOutput);
+                return processed.equals(ProvidedOutput);
             }
         } catch (Exception e) {
             logger.error("\n Error occurred in cosmos verifying" + e.getMessage());

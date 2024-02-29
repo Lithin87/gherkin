@@ -18,8 +18,8 @@ public abstract class ValidationTemplateInterface {
     
     protected  abstract void messageSend(String inputTopic, String jsonContent);
     protected  abstract void simulate(String outputTopic, String ProvidedOutput);
-    protected  abstract List<JsonNode> messageListen(String outputTopic);
-    protected  abstract boolean messageVerify(List<JsonNode>  ProcessedOutput, JsonNode ProvidedOutput);
+    protected  abstract JsonNode messageListen(String outputTopic);
+    protected  abstract boolean messageVerify(JsonNode  ProcessedOutput, JsonNode ProvidedOutput);
 
     public  final  boolean execute( TestInput testInput ) {
     
@@ -30,7 +30,7 @@ public abstract class ValidationTemplateInterface {
       
         JsonNode inputMsgJson = testInput.getInputMsgJson();
         JsonNode providedOutput = testInput.getOutputMsgJson(); 
-        List<JsonNode> processedOutput =  null;
+        JsonNode processedOutput =  null;
 
      
         if(outputTopic == null)

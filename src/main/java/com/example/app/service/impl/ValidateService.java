@@ -21,13 +21,13 @@ public class ValidateService {
     public String beginVerification( String jsonData)
     {
         TestInput inputTest = null;
+
         try {
             inputTest = objectMapper.readValue(jsonData , TestInput.class);
             System.out.println("Value: " + inputTest);
             
             String qualifier =  (inputTest.getOutputTopic() == null) ? "cosmos" : "kafka" ;
             ValidationTemplateInterface validationTemplateImpl = (ValidationTemplateInterface) context.getBean(qualifier);
-            System.out.println("Value 1: " + inputTest);
 
             String result = validationTemplateImpl.execute(inputTest) == true ? "TEST PASS"  : "TEST FAIL" ;
             System.out.println("TEST RESULT : " + result);

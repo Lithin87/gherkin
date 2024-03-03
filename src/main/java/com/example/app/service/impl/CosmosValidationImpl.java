@@ -55,7 +55,7 @@ public class CosmosValidationImpl extends ValidationTemplateInterface {
     private JsonNode processed = null;
 
     @Override
-    protected void messageSend(String inputTopic, String jsonContent) {
+    protected void messageSend(String inputTopic, String outputTopic , String jsonContent) {
         kafkaTemplate.send(inputTopic, jsonContent);
         logger.info("\n At cosmos sending ");
     }

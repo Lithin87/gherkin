@@ -16,7 +16,7 @@ public abstract class ValidationTemplateInterface {
      @Autowired
     ObjectMapper objectMapper;
     
-    protected  abstract void messageSend(String inputTopic, String jsonContent);
+    protected  abstract void messageSend(String inputTopic, String outputTopic, String jsonContent);
     protected  abstract void simulate(String outputTopic, String ProvidedOutput);
     protected  abstract JsonNode messageListen(String outputTopic);
     protected  abstract boolean messageVerify(JsonNode  ProcessedOutput, JsonNode ProvidedOutput);
@@ -40,16 +40,16 @@ public abstract class ValidationTemplateInterface {
             String id = providedOutput.get("id").asText();
             outputTopic = String.join(":", dbName, tbleName, id);
 
-            messageSend( inputTopic, objectMapper.writeValueAsString(inputMsgJson));
+            messageSend( inputTopic, outputTopic, objectMapper.writeValueAsString(inputMsgJson));
             simulate(outputTopic ,  objectMapper.writeValueAsString(providedOutput));
             processedOutput = messageListen( outputTopic);
             return messageVerify( processedOutput,  providedOutput);
 
          }else{
     
-            processedOutput = messageListen( outputTopic);
-            messageSend( inputTopic, objectMapper.writeValueAsString(inputMsgJson));
+            messageSend( inputTopic, outputTopic,  objectMapper.writeValueAsString(inputMsgJson));
             simulate(outputTopic ,  objectMapper.writeValueAsString(providedOutput));
+            processedOutput = messageListen( outputTopic);
             return messageVerify( processedOutput,  providedOutput);
          }
             } catch (JsonProcessingException e) {

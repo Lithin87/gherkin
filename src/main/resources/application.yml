@@ -1,16 +1,16 @@
 spring:
   kafka:
     bootstrap-servers: localhost:9092
-    consumer:
-      properties:
-        allow.auto.create.topics: false
-      service:
-        group-id: consumer-group
-      client-id: test-client-group
-    client-id: producer_client
     size: 2097152
     admin:
       enabled: true
+    consumer:
+      client-id: consumer-client
+      group-id: consumer-group
+      properties:
+        allow.auto.create.topics: false
+    producer:
+      client-id: producer-client
 azure:
   cosmos:
     uri: https://localhost:8081
